@@ -1,0 +1,6 @@
+*__pyc
+__init__.py
+df.csv
+__pycache__/
+venv/
+pos-tech-403001-25c18098d334.json
