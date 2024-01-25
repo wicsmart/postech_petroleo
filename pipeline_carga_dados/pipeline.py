@@ -29,12 +29,11 @@ def extrac(url):
 
     return df
 
-def save_data_raw(df):
+def save_data_raw(df, filepath):
     # Salvar o DataFrame como arquivo Parquet
     try:
-        arquivo_parquet = 'petr_price.parquet'
-    
-        df.to_parquet(arquivo_parquet, index=False)
+     
+        df.to_parquet(filepath, index=False)
     
     except Exception as err:
     
@@ -108,26 +107,11 @@ def wmape(y_true,y_pred):
     y_pred = y_pred.values
     return np.mean(np.abs((y_true - y_pred) / y_true))
 
-def save_model(model):
+def save_model(model, filepath):
 
-    with open('serialized_model.json', 'w') as fout:
+    with open(filepath, 'w') as fout:
 
         fout.write(model_to_json(model))  # Save model
-
-
-def predict(model, data):
-
-    date2 = datetime.strptime(data, '%Y-%m-%d')
-
-    futuro = (date2 - __LAST_DAY).days
-
-    print(futuro)
-    
-    fut = model.make_future_dataframe(periods=futuro, include_history=False, freq='D')
-    
-    forecast = model.predict(fut)
-
-    return forecast
 
 
 
@@ -137,6 +121,8 @@ if __name__ == "__main__":
     url = "http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view"
 
     df = extrac(url=url)
+
+    save_data_raw(df=df, filepath='/shared/petr_price.parquet')
 
     df_refined = transform(df)
 
@@ -148,7 +134,7 @@ if __name__ == "__main__":
 
     try:
     
-        save_model(model=model)
+        save_model(model=model, filepath='/shared/serialized_model.json')
 
         print("Modelo salvo com sucesso")
 

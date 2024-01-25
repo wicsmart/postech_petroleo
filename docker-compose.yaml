@@ -8,10 +8,13 @@ services:
     ports:
       - "8501:8501"
     volumes:
-      - .:/app
+      - shared-data:/shared:data
   etl:
     build:
       context: ./pipeline_carga_dados
       dockerfile: dockerfile
     volumes:
-      - .:/pipeline_carga_dados
+      - shared-data:/shared:data
+  
+volumes:
+  shared-data:

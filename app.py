@@ -2,9 +2,48 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from google.cloud import bigquery
+from prophet import Prophet
+import numpy as np
 from google.oauth2 import service_account
 import datetime
-import joblib
+from prophet.serialize import model_from_json
+
+
+__LAST_DAY = "2024-01-16"
+
+def predict(model, data):
+
+    date1 = datetime.strptime(__LAST_DAY, '%Y-%m-%d')
+
+    date2 = datetime.strptime(data, '%Y-%m-%d')
+
+    futuro = (date2 - date1).days
+
+    print(futuro)
+    
+    fut = model.make_future_dataframe(periods=futuro, include_history=False, freq='D')
+    
+    forecast = model.predict(fut)
+
+    return forecast
+
+def load_model(path):
+
+    with open('serialized_model.json', 'r') as fin:
+
+        m = model_from_json(fin.read())  # Load model
+
+    return m
+
+def get_prices():
+    
+    modelo_carregado = load_model("serialized_model.json")
+
+    predito = predict(model=modelo_carregado, data="2024-01-25")
+
+    result = predict.query('ds == "2024-01-28"')
+
+    result[['ds','yhat']]
 
 
 # Título ----------------------------------------------------------
