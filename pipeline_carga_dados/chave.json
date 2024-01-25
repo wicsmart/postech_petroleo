@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "pos-tech-403001",
+  "private_key_id": "1411a24915cc9c54732a973e3699a1c0eb8272f9",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCOFyOl3Ipt6lL8\naKU/Jcf6o2LmHp+9tQSxq8cGHU62nuRrRNYSZa82eVlu32xCFNRKxSWRbUZYnSic\nBO3rMFtp1LDld89s7Pfj3Y28CPEVue5MtBb3EgQzns3zrmFzQYDpPPu+ftzo4CJp\nB+tfZWxnjk8YL28kuTNXAld1oRhmy4f6IPAxCp76XgaEsbLpoUQvMKk1h6hJBYUH\nHBZoToFvgUfyu084H08/f2uYK/hPfNs1nbF1t5HqWl9dsxhAEx7NcpiWcfcsceMN\n+CGAzX4LnNUvGbUTk0/h9H4SoKdnfO8e0bUJrUZ6ZF5fQUtU0Rc8aBTBQsxargVs\nkNW5H+3dAgMBAAECggEAD1QrZNks1/HHv8eRotqHv0rWwF5SZmFmdGfEjKzRu+gw\nBUCDsFq8SG4BT3GWrhmtfgl/EDglNtRxjUSyNBq0lJoSTBcc+gfQhbUg9XBTg0AF\nQiIgOMmpSWEFn+x9QoqxBmMtV3OROnr09gwZgOJMtm6cVXlx40OAPeVDRoM5bNwO\nvfpMIx+sBs2/Ysb5i4UrrgCKZ3HH1iMJBDDRvQb46diFqs1q4EeTowHubMpWcKnI\nWiqLjtCscVpSQaQ8i/hXfZVxCqdjmX1CItRO4Cn1w5e/JtzYCBq+EwmDq7DCEWyc\nWnO119DBPi6Mo/YVEOd2P5crmB/m5RpHDOAdDG4IAwKBgQDBk1SBCO15w7VA05SG\nFjo/4NU+1jgFYoRIjFd9fLo/S0sPocedGN6Yrr7s7Zzyota+K8e+Sn+I8Pb1FhJF\nm+LzasO9oY6A1fTPLakZbmVPmWsFWfxFfVLM0EhTKhm5bRqOSxS2mCyAizCxsOxJ\n24+pRHt/H3j51yd/bYcg5JmG2wKBgQC76XGBJ7jzeFA8Um8PnJx1lxLnx+qu1YcX\nJwqzFJPeReHJkR3IHJGsHDZkXWUaPaTKkDosQa2IyHquYh1u+2seSWfrGJk/9QU/\nRmHoJiuxFZjXGz60B2M2GpOcWR0nv4VbjnaNPJMigns5D5YEYHnUsKUJL8xVAkwV\nW7IN7oBvpwKBgEZ71d4yGP4oQ7w6Di+Qsl8GB7+cksNrLs2XxFed7dcUHF2xw5Qx\nNQQVRNHSZz52CokuOcnRKIT9cH6nLboI2+dULbfDtra0sTIq5xKqftsv+qb1MAVB\nb7/B60PU5Y796hh7wCwIVtPrWqyoxjDScInqtKkCFbOrIuekQvq4IirXAoGAaAV/\nXsbVfHnSuMHNVzAT8IhT39jsUiJD6Q4kvyOaA4Zdyg46FUezYDox5fdJe3A6ZCPZ\nABzPapPITfZkYsZs8tQh4aO5Wg1R/UgB9NgEgb/53sHnQROB2TZ3FirCl/lOYnOH\nrwGkVYszmU/GdN/PMW0jvuUl0L03zu72rv2jPasCgYEAwK+COUKlS/sFeTjw6tsi\nfaERsfKQMCzRS7FlaedEkI2EvZImeOelLhk/KNGjBStEXMyxRFxds3RtxKbhR1hY\nqNysA+7/V9VZ+DX7Nh2RqPGYLdg1TWI62l2vXkDELPP2Su0Ue1En7g/LwZbUhTb/\nR0Ej3BTM13KTtO3f7D9+97o=\n-----END PRIVATE KEY-----\n",
+  "client_email": "pos-tech@pos-tech-403001.iam.gserviceaccount.com",
+  "client_id": "115070623090100515471",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/pos-tech%40pos-tech-403001.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

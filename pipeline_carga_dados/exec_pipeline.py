@@ -35,6 +35,6 @@ def run_container_script():
         # Remove o container após a execução
         container.remove(force=True)
 
-if __name__ == "__main__":
-    run_container_script()
+# if __name__ == "__main__":
+#     run_container_script()
 

@@ -16,8 +16,12 @@ st.title('Preço por barril do petróleo bruto Brent (FOB) :chart:')
 projeto_id = 'pos-tech-403001'
 dataset_id = 'tech_challenge'
 tabela_id = 'raw_petr_brent'
-credentials = service_account.Credentials.from_service_account_file('./pos-tech-403001-25c18098d334.json')
+
+
+credentials = service_account.Credentials.from_service_account_file('./chave.json')
 client = bigquery.Client(credentials=credentials, project=projeto_id)
+
+
 # Consulta SQL para selecionar todos os dados da tabela
 consulta_sql = f'SELECT * FROM `{projeto_id}.{dataset_id}.{tabela_id}`'
 resultado = client.query(consulta_sql)

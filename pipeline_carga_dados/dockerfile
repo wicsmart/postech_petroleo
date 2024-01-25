@@ -4,13 +4,26 @@ FROM python:3.10.13-slim
 # Defina o diretório de trabalho no contêiner
 WORKDIR /home/project
 
+#Install Cron
+RUN apt-get update
+RUN apt-get -y install cron
+
+# Add the cron job
+RUN crontab -l | { cat; echo "* * * * * pyhton pipeline.py"; } | crontab -
+
 # Copie os arquivos do projeto para o contêiner
-COPY . /home/project
+# COPY . /home/project
+
+ENV EDITOR=nano
 
 # Instale as bibliotecas necessárias
 RUN pip install --upgrade pip
 RUN pip install pandas \
                lxml \
+               prophet \
+               plotly \
+               plotly.express \
+               numpy \
                pandas-gbq -U
 
-CMD ["python", "pipeline.py"]
+CMD ["cron", "-f"]
