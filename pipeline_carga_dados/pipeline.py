@@ -1,15 +1,19 @@
 #!/usr/bin/env python0
 # coding: utf-8
 
+from datetime import datetime
 import pandas as pd
 from google.cloud import bigquery
 from google.oauth2 import service_account
 from prophet import Prophet
 import numpy as np
-from prophet.serialize import model_to_json, model_from_json
+from prophet.serialize import model_to_json
 
 import warnings
 warnings.filterwarnings('ignore')
+
+
+__LAST_DAY = None
 
 def extrac(url):
 
@@ -94,8 +98,10 @@ def transform(df):
 def train_split_data(dff, start_train):
 
     train =  dff.loc[(dff['ds'] >= start_train)]
-
-    return train
+    
+    last_date = dff['ds'].iloc[-1]
+    
+    return train, last_date
 
 def wmape(y_true,y_pred):
     y_true = y_true.values
@@ -108,23 +114,23 @@ def save_model(model):
 
         fout.write(model_to_json(model))  # Save model
 
-def load_model(path):
-
-    with open('serialized_model.json', 'r') as fin:
-
-        m = model_from_json(fin.read())  # Load model
-
-    return m
 
 def predict(model, data):
 
-    futuro = 30
+    date2 = datetime.strptime(data, '%Y-%m-%d')
+
+    futuro = (date2 - __LAST_DAY).days
+
+    print(futuro)
     
     fut = model.make_future_dataframe(periods=futuro, include_history=False, freq='D')
     
     forecast = model.predict(fut)
 
     return forecast
+
+
+
 
 if __name__ == "__main__":
     
@@ -134,16 +140,18 @@ if __name__ == "__main__":
 
     df_refined = transform(df)
 
-    df_train = train_split_data(dff=df_refined, start_train= "2018-01-01")
+    df_train, __LAST_DAY = train_split_data(dff=df_refined, start_train= "2018-01-01")
 
     model = Prophet(interval_width=0.95)
 
     model.fit(df_train)
 
-    save_model(model=model)
+    try:
+    
+        save_model(model=model)
 
-    modelo_carregado = load_model("serialized_model.json")
+        print("Modelo salvo com sucesso")
 
-    predito = predict(model=modelo_carregado, data="2024-01-25")
-
-    print(predito)
+    except Exception as err:
+         
+        print(str(err))
