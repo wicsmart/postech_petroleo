@@ -5,73 +5,98 @@ from google.cloud import bigquery
 from prophet import Prophet
 import numpy as np
 from google.oauth2 import service_account
-import datetime
+from datetime import datetime
 from prophet.serialize import model_from_json
+import logging
 
 
-__LAST_DAY = "2024-01-16"
+def read_last_day(filepath):
+
+    with open(filepath, 'r') as file:
+        # Read the first line
+        first_line = file.readline()
+    
+    return first_line
+
 
 def predict(model, data):
 
-    date1 = datetime.strptime(__LAST_DAY, '%Y-%m-%d')
+    last_day = read_last_day("/shared/lastday.txt")
+    try:
+        logging.info(last_day)
+        logging.info(type(last_day))
 
-    date2 = datetime.strptime(data, '%Y-%m-%d')
+        logging.info(data)
+        logging.info(type(data))
 
-    futuro = (date2 - date1).days
+        date_time_object = datetime.strptime(last_day, '%Y-%m-%d %H:%M:%S')
+    
+        timestamp = date_time_object.timestamp()
 
+        # date1 = datetime.strptime(last_day, '%Y-%m-%d')
+
+        # date2 = datetime.strptime(data, '%Y-%m-%d')
+
+        futuro = (data - timestamp).days
+
+    except:
+        futuro = 1
+    
     print(futuro)
     
     fut = model.make_future_dataframe(periods=futuro, include_history=False, freq='D')
     
     forecast = model.predict(fut)
 
-    return forecast
+    result = forecast.query('ds == "2024-01-28"')
+
+    return result[['ds','yhat']]
+
 
 def load_model(path):
 
-    with open('serialized_model.json', 'r') as fin:
+    with open(path, 'r') as fin:
 
         m = model_from_json(fin.read())  # Load model
 
     return m
 
-def get_prices():
+def get_price():
     
     modelo_carregado = load_model("serialized_model.json")
 
     predito = predict(model=modelo_carregado, data="2024-01-25")
 
-    result = predict.query('ds == "2024-01-28"')
-
-    result[['ds','yhat']]
+    return predito
 
 
 # Título ----------------------------------------------------------
 st.title('Preço por barril do petróleo bruto Brent (FOB) :chart:')  
 
 
-# Dataframe ----------------------------------------------
-# Autenticação para o BigQuery usando arquivo de credenciais
-projeto_id = 'pos-tech-403001'
-dataset_id = 'tech_challenge'
-tabela_id = 'raw_petr_brent'
 
 
-credentials = service_account.Credentials.from_service_account_file('./chave.json')
-client = bigquery.Client(credentials=credentials, project=projeto_id)
+# # Consulta SQL para selecionar todos os dados da tabela
+# consulta_sql = f'SELECT * FROM `{projeto_id}.{dataset_id}.{tabela_id}`'
+# resultado = client.query(consulta_sql)
 
-
-# Consulta SQL para selecionar todos os dados da tabela
-consulta_sql = f'SELECT * FROM `{projeto_id}.{dataset_id}.{tabela_id}`'
-resultado = client.query(consulta_sql)
 # Converte o resultado em um DataFrame do Pandas
-df = resultado.to_dataframe()
-df.columns = ['Data','Preço']
-df['Data'] = pd.to_datetime(df['Data'],format='%d/%m/%Y')
-df = df.sort_values(by='Data', ascending=True)
-df.reset_index(inplace=True, drop=True)
 
-df = df.query('Data >= "2000-01-01"')
+
+df = pd.read_parquet('/shared/refined_data.parquet')
+# df.columns = ['Data','Preço']
+# Display the DataFrame
+print(df.head())
+
+df.rename(columns={'ds': 'Data', 'y': 'Preço'}, inplace=True)
+
+
+
+# df['Data'] = pd.to_datetime(df['Data'],format='%d/%m/%Y')
+# df = df.sort_values(by='Data', ascending=True)
+# df.reset_index(inplace=True, drop=True)
+
+# df = df.query('Data >= "2000-01-01"')
 
 # Visual --------------------------------------------------------
 aba1, aba2, aba3 = st.tabs(['Análise dos Preços', 'Previsão de Preços', 'Highlights'])
@@ -120,9 +145,13 @@ with aba2:
     #print(type(d))
 
     if st.button('Enviar'):
-        model = joblib.load('model_prophet.joblib')
-        final_pred = model.predict(pd.to_datetime(d,format='%d/%m/%Y'))
-        st.write('Preço:', final_pred) 
+        model = load_model(path='/shared/serialized_model.json')
+
+        data = pd.to_datetime(d,format='%Y/%m/%d')
+        print('data escolhida =>> {data}')        
+        predito = predict(model, data)
+
+        st.write('Preço:', predito['yhat']) 
 
 
 

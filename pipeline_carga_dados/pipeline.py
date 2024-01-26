@@ -13,7 +13,6 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-__LAST_DAY = None
 
 def extrac(url):
 
@@ -29,7 +28,7 @@ def extrac(url):
 
     return df
 
-def save_data_raw(df, filepath):
+def save_data(df, filepath):
     # Salvar o DataFrame como arquivo Parquet
     try:
      
@@ -114,6 +113,12 @@ def save_model(model, filepath):
         fout.write(model_to_json(model))  # Save model
 
 
+def save_last_day(last_day):
+  
+  with open("/shared/lastday.txt", 'w') as file:
+  
+    file.write(str(last_day))
+
 
 
 if __name__ == "__main__":
@@ -122,12 +127,17 @@ if __name__ == "__main__":
 
     df = extrac(url=url)
 
-    save_data_raw(df=df, filepath='/shared/petr_price.parquet')
+    save_data(df=df, filepath='/shared/raw_data.parquet')
 
     df_refined = transform(df)
 
-    df_train, __LAST_DAY = train_split_data(dff=df_refined, start_train= "2018-01-01")
+    save_data(df=df_refined, filepath='/shared/refined_data.parquet')
 
+    df_train, last_day = train_split_data(dff=df_refined, start_train= "2018-01-01")
+
+    # salva a ultima data do modelo para calcular os dias futuror no lado do stramlit
+    save_last_day(last_day=last_day)
+    
     model = Prophet(interval_width=0.95)
 
     model.fit(df_train)

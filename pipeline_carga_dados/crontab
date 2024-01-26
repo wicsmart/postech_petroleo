@@ -1,2 +1,2 @@
 
-* * * * * python /home/project/pipeline.py >> /var/log/cron.log 2>&1
+0 12 * * * /usr/local/bin/python /home/project/pipeline.py >> /var/log/cron.log 2>&1

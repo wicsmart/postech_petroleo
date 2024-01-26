@@ -9,7 +9,7 @@ RUN apt-get update
 RUN apt-get -y install cron
 
 # Add the cron job
-RUN crontab -l | { cat; echo "* * * * * python /home/project/pipeline.py >> /var/log/cron.log 2>&1"; } | crontab -
+RUN crontab -l | { cat; echo "0 12 * * * /usr/local/bin/python /home/project/pipeline.py >> /var/log/cron.log 2>&1"; } | crontab -
 
 # Copie os arquivos do projeto para o contêiner
 COPY . /home/project
