@@ -10,6 +10,11 @@ from prophet.serialize import model_from_json
 import logging
 
 
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+
+
 def read_last_day(filepath):
 
     with open(filepath, 'r') as file:
@@ -23,11 +28,7 @@ def predict(model, data):
 
     last_day = read_last_day("/shared/lastday.txt")
     try:
-        logging.info(last_day)
-        logging.info(type(last_day))
-
-        logging.info(data)
-        logging.info(type(data))
+      
 
         date_time_object = datetime.strptime(last_day, '%Y-%m-%d %H:%M:%S')
     
