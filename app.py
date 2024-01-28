@@ -5,7 +5,17 @@ from google.cloud import bigquery
 from google.oauth2 import service_account
 import datetime
 import joblib
+import time
 
+# Funções -----
+@st.cache_data
+def converte_csv(df):
+    return df.to_csv(index=False).encode('latin1')
+
+def mensagem_sucesso():
+    sucesso = st.success("Download concluído", icon="✅")
+    time.sleep(5)
+    sucesso.empty()
 
 # Título ----------------------------------------------------------
 st.title('Preço por barril do petróleo bruto Brent (FOB) :chart:')  
@@ -74,6 +84,8 @@ with aba1:
 
     # Dataframe------
     st.dataframe(df_filter,hide_index=True)
+    st.download_button('Exportar csv', data=converte_csv(df_filter),file_name='file.csv', mime='text/csv', on_click=mensagem_sucesso)
+    
 
 with aba2:
     # KPI -----------
