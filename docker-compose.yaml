@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    # command: ["streamlit run /home/app.py --server.port=8501, --server.address=0.0.0.0"]
+    ports:
+      - "8501:8501"
+    volumes:
+      - shared-data:/shared:data
+      - .:/home/project
+  etl:
+    build:
+      context: ./pipeline_carga_dados
+      dockerfile: dockerfile
+    volumes:
+      - shared-data:/shared:data
+      - .:/app
+volumes:
+  shared-data:

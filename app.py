@@ -2,10 +2,73 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from google.cloud import bigquery
+from prophet import Prophet
+import numpy as np
 from google.oauth2 import service_account
 import datetime
 import joblib
 import time
+from prophet.serialize import model_from_json
+
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+
+
+def read_last_day(filepath):
+
+    with open(filepath, 'r') as file:
+        # Read the first line
+        first_line = file.readline()
+    
+    return first_line
+
+
+def predict(model, data):
+
+    last_day = read_last_day("/shared/lastday.txt")
+    try:
+      
+
+        date_time_object = datetime.strptime(last_day, '%Y-%m-%d %H:%M:%S')
+    
+        timestamp = date_time_object.timestamp()
+
+        # date1 = datetime.strptime(last_day, '%Y-%m-%d')
+
+        # date2 = datetime.strptime(data, '%Y-%m-%d')
+
+        futuro = (data - timestamp).days
+
+    except:
+        futuro = 1
+    
+    print(futuro)
+    
+    fut = model.make_future_dataframe(periods=futuro, include_history=False, freq='D')
+    
+    forecast = model.predict(fut)
+
+    result = forecast.query('ds == "2024-01-28"')
+
+    return result[['ds','yhat']]
+
+
+def load_model(path):
+
+    with open(path, 'r') as fin:
+
+        m = model_from_json(fin.read())  # Load model
+
+    return m
+
+def get_price():
+    
+    modelo_carregado = load_model("serialized_model.json")
+
+    predito = predict(model=modelo_carregado, data="2024-01-25")
+
+    return predito
 
 # Funções -----
 @st.cache_data
@@ -20,27 +83,36 @@ def mensagem_sucesso():
 # Título ----------------------------------------------------------
 st.title('Preço por barril do petróleo bruto Brent (FOB) :chart:')  
 
+# # Consulta SQL para selecionar todos os dados da tabela
+# consulta_sql = f'SELECT * FROM `{projeto_id}.{dataset_id}.{tabela_id}`'
+# resultado = client.query(consulta_sql)
 
 # Dataframe ----------------------------------------------
 # Autenticação para o BigQuery usando arquivo de credenciais
-projeto_id = 'pos-tech-403001'
-dataset_id = 'tech_challenge'
-tabela_id = 'raw_petr_brent'
-credentials = service_account.Credentials.from_service_account_file('./pos-tech-403001-25c18098d334.json')
-client = bigquery.Client(credentials=credentials, project=projeto_id)
-# Consulta SQL para selecionar todos os dados da tabela
-consulta_sql = f'SELECT * FROM `{projeto_id}.{dataset_id}.{tabela_id}`'
-resultado = client.query(consulta_sql)
-
+# projeto_id = 'pos-tech-403001'
+# dataset_id = 'tech_challenge'
+# tabela_id = 'raw_petr_brent'
+# credentials = service_account.Credentials.from_service_account_file('./pos-tech-403001-25c18098d334.json')
+# client = bigquery.Client(credentials=credentials, project=projeto_id)
+# # Consulta SQL para selecionar todos os dados da tabela
+# consulta_sql = f'SELECT * FROM `{projeto_id}.{dataset_id}.{tabela_id}`'
+# resultado = client.query(consulta_sql)
 
 
 # Converte o resultado em um DataFrame do Pandas
-df = resultado.to_dataframe()
-df.columns = ['Data','Preço']
-df['Data'] = pd.to_datetime(df['Data'],format='%d/%m/%Y')
-df = df.sort_values(by='Data', ascending=True)
-df.reset_index(inplace=True, drop=True)
 
+
+df = pd.read_parquet('/shared/refined_data.parquet')
+
+print(df.head())
+
+df.rename(columns={'ds': 'Data', 'y': 'Preço'}, inplace=True)
+
+# df['Data'] = pd.to_datetime(df['Data'],format='%d/%m/%Y')
+# df = df.sort_values(by='Data', ascending=True)
+# df.reset_index(inplace=True, drop=True)
+
+# df = df.query('Data >= "2000-01-01"')
 
 # Filtro -------------------------------------------------------
 with st.sidebar:
@@ -52,7 +124,6 @@ with st.sidebar:
         max_value=MIN_MAX_RANGE[1])
 df_filter = df.query("Data >= @selected_min \
                        and Data < @selected_max")
-
 # Visual --------------------------------------------------------
 
 
@@ -105,6 +176,7 @@ with aba2:
 
     
     if st.button('Enviar'):
+
         model = joblib.load('model_prophet.joblib')
         final_pred = model.predict(out)
         print(final_pred)
