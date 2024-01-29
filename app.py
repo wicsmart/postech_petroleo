@@ -111,6 +111,7 @@ with aba1:
     st.plotly_chart(fig_bar)
 
     # Dataframe------
+    df_filter = df_filter.drop('unique_id', axis=1)
     st.dataframe(df_filter, hide_index=True)
     st.download_button('Exportar csv', data=converte_csv(
         df_filter), file_name='file.csv', mime='text/csv', on_click=mensagem_sucesso)
