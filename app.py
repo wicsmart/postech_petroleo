@@ -102,7 +102,7 @@ st.title('Preço por barril do petróleo bruto Brent (FOB) :chart:')
 # Converte o resultado em um DataFrame do Pandas
 
 
-df = pd.read_parquet('/shared/refined_data.parquet')
+df = pd.read_parquet('shared/refined_data.parquet')
 
 print(df.head())
 
@@ -177,7 +177,7 @@ with aba2:
     
     if st.button('Enviar'):
 
-        model = joblib.load('model_prophet.joblib')
+        model = joblib.load('shared/model_prophet.joblib')
         final_pred = model.predict(out)
         print(final_pred)
         st.write('O preço previsto para a data selecionada é:', final_pred['yhat'].values[0].round(2))
